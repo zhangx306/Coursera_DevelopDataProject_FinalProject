@@ -91,13 +91,8 @@ shinyServer(function(input, output) {
                  axis.title = element_text(size = 11, face = "bold")) +
            theme(strip.text = element_text(colour = "blue", face = "bold", size = 13)) +
            theme(legend.position="none") 
-           
-           
           
-         
-          gg2
-          
-           ggplotly(gg2)
+         ggplotly(gg2)
            
        } else {
          plotly_empty()
