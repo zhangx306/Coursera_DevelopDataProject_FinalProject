@@ -1,0 +1,73 @@
+Coursera Develop Data Product Final Project
+========================================================
+author: zhangx306
+date: 10/9/2018
+autosize: true
+
+Overview
+========================================================
+The web app does a **univariate prediction of miles per gallon (mpg) using either linear regression
+or random forest algorihm**.
+
+- The app uses *mtcars* data set 
+- Users first pick one feature as the predictor 
+- Users then choose the algorithm (lm or rf or both) to predict mpg using the selected feature
+- All plots are generated with **Plotly**, thus are **interactive**!
+
+
+Step One: Pick One Feature
+========================================================
+The data set *mtcars* includes 11 features including mpg, the y variable. Thus, there are 10 candidates for the univariate prediction. The 10 features are:
+```{r}
+names(mtcars)[2:11]
+```
+
+There is a drop-down menu for users to select the predictor. Once the predictor is selected, users can click **Update Plot** button, and the distribution of selected predictor will show up. By doing this, users get a better understanding the feature that will be fed into the algorithm.
+
+
+
+Step Two: Run the Selected Algorithm(s)
+========================================================
+Check either **Linear Regression** or **Random Forest** or both, then hit **Update Algorithm**. The selected algorithm(s) will run in the back and a plot of actual v. fitted mpg will be generated. For example, if x-var is hp and both algorithms are chosen, the resulting plot will be
+
+```{r echo=FALSE, message=F}
+library(ggplot2)
+library(randomForest)
+mod_formula <- formula(paste0("mpg ~ hp"))
+
+pred_lm <- predict(lm(data = mtcars, mod_formula))
+dt_plot1 <- data.frame(y = mtcars$mpg, x = mtcars$hp,
+                       y_ft = pred_lm, model = as.character(rep("Linear Regression", nrow(mtcars))))
+
+pred_rf <- predict(randomForest(data = mtcars, mod_formula))
+dt_plot2 <- data.frame(y = mtcars$mpg, x = mtcars$hp,
+                       y_ft = pred_rf, model = as.character(rep("Random Forest", nrow(mtcars))))
+
+dt_plot <- rbind(dt_plot1, dt_plot2 )
+
+gg <- ggplot(dt_plot, aes(x = x, y = y)) +
+  facet_wrap( .~ model) +
+  geom_point(col = "black") +
+  geom_point(aes(x = x, y = y_ft, col = model)) +
+  labs(y = "mpg", x = "hp", title = "Actual (Black) v. Fitted (Colored) Values of MPG ") +
+  theme_bw() +
+  theme(title = element_text(size = 26, face = "bold"),
+        axis.text = element_text(size = 18),
+        axis.title = element_text(size = 20, face = "bold")) +
+  theme(strip.text = element_text(colour = "blue", face = "bold", size = 24)) +
+  theme(legend.position="none")
+
+```
+```{r, fig.width = 14, fig.height = 5.5, fig.align="center", echo = F}
+gg
+```
+
+
+
+Links
+========================================================
+1. The App
+https://zhangx306.shinyapps.io/Cousera_DevelopDataProduct_FinalProject/
+
+2. The Source Code
+https://github.com/zhangx306/Coursera_DevelopDataProject_FinalProject
